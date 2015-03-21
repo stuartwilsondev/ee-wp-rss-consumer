@@ -91,10 +91,16 @@ function writePost($item)
         $the_post_id = wp_update_post( $my_post );*/
 
     }else{
+
+        $externalLink = "<br/><br/><a target='_blank' href='{$item->viaUrl}' title='Read more on {$item->via}' >Read more on {$item->via}</a>";
+        $description = $item->description;
+
+
+
         $my_post = array(
             'post_title' => $item->title,
             'post_date' => $_SESSION['cal_startdate'],
-            'post_content' => $item->description,
+            'post_content' => $description.$externalLink,
             'post_status' => 'publish',
             'post_type' => 'post',
             'post_author' => $author
@@ -131,7 +137,7 @@ function wp_exist_page_by_title($title_str) {
 function cron_add_minute( $schedules ) {
     // Adds once every minute to the existing schedules.
     $schedules['everyminute'] = array(
-        'interval' => 1,
+        'interval' => 60,
         'display' => __( 'Once Every Minute' )
     );
     return $schedules;
@@ -163,6 +169,7 @@ function my_repeat_function_rss() {
     $rss = setUpRss();
     $items = getItems($rss);
 
+    $items = array_reverse($items);
     foreach($items as $item) {
         writePost($item);
     }
